@@ -1,0 +1,37 @@
+.login-container{
+   min-height: 100vh;
+min-width: 100vw;
+    background: linear-gradient( to right, #daecf2 , #3ac8f7 );
+    background-repeat: repeat;
+}
+.no-focus-outline:focus,
+.no-focus-outline:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.no-label-bg:focus ~ label,
+.no-label-bg:not(:placeholder-shown) ~ label {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+
+.floating-label-custom .form-floating>.form-control:focus~label,
+.floating-label-custom .form-floating>.form-control:not(:placeholder-shown)~label {
+  background-color: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 !important;
+  left: 0 !important;
+}
+
+
+.floating-label-custom .form-floating > label::after {
+    background-color: transparent !important;
+    content: none !important; 
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+/* Blurred background for the form */

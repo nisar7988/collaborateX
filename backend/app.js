@@ -35,6 +35,7 @@ io.on('connection', socket => {
   socket.on('room:join', data => {
     console.log('room:join')
     const { email, room } = data
+    socket.roomId = room;  
     emailToSocketIdMap.set(email, socket.id)
     socketidToEmailMap.set(socket.id, email)
     io.to(room).emit('user:joined', { email, id: socket.id })
@@ -64,6 +65,15 @@ io.on('connection', socket => {
     console.log('peer:nego:done', ans)
     io.to(to).emit('peer:nego:final', { from: socket.id, ans })
   })
+  socket.on("leave-room", () => {
+    const roomId = socket.roomId;
+    console.log(`User ${socket.id} is leaving the room`);
+    // Broadcast to other users in the room that this user has left
+    socket.broadcast.to(roomId).emit("user-left", { userId: socket.id });
+    
+    // Leave the room
+    socket.leave(roomId);
+  });
 
   socket.on('disconnect', () => {
     console.log(`Socket Disconnected: ${socket.id}`);

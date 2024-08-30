@@ -3,7 +3,7 @@ import { Card, Button } from 'flowbite-react';
 import { AiOutlineClose, AiOutlineUserAdd, AiOutlineCopy } from 'react-icons/ai'; // React Icons
 
 const MeetingCard = (props) => {
-    const {setIsMeetingCard}=props
+    const {setShowRoomCode}=props
   const userId = "user@example.com"; // Replace with the actual user ID
 
   // Function to handle copy to clipboard
@@ -17,7 +17,7 @@ const MeetingCard = (props) => {
       {/* Heading and Close Icon */}
       <div className="flex justify-between items-center mb-2">
         <h5 className="text-xl font-bold">Your meeting is ready</h5>
-        <AiOutlineClose className="w-5 h-5 cursor-pointer" onClick={()=>setIsMeetingCard(false)} />
+        <AiOutlineClose className="w-5 h-5 cursor-pointer" onClick={()=>setShowRoomCode(false)} />
       </div>
 
       {/* Add Participant Button */}

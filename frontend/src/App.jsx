@@ -6,7 +6,7 @@ import VideoCallScreen from './pages/VideoCallScreen';
 import {BrowserRouter as Router,Routes,Route} from 'react-router-dom'
 import NotFound from './pages/NotFound';
 import Rejoin from './pages/Rejoin';
-import MeetingCard from './components/MeetingCard';
+
 import ProfilePage from './pages/Profile';
 import JoinMeeting from './pages/JoinMeeting';
 
@@ -19,6 +19,8 @@ const App = () => {
     <Route path='/auth' element={<Auth/>} />
     <Route path='/profile' element={<ProfilePage/>} />
     <Route path='/join-meeting' element={<JoinMeeting/>} />
+    <Route path='/rejoin' element={<Rejoin/>} />
+
     <Route path="/room/:roomid" element={<VideoCallScreen/>} />
 <Route path="*" element={<NotFound/> } />
   </Routes>

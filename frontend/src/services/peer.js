@@ -22,11 +22,26 @@ class PeerService {
         return ans;
       }
     }
-  
+    async addTracks(stream){
+      if (this.peer && stream) {
+        stream.getTracks().forEach(track => {
+          const senders = this.peer.getSenders();
+          const trackAlreadyAdded = senders.some(sender => sender.track === track);
+          if (!trackAlreadyAdded) {
+            this.peer.addTrack(track,stream);
+          }
+        });
+      }
+    }
     async setLocalDescription(ans) {
+     try{
       if (this.peer) {
         await this.peer.setRemoteDescription(new RTCSessionDescription(ans));
       }
+     }
+     catch(err){
+      console.log('error encounter setting answer ',err)
+     }
     }
   
     async getOffer() {

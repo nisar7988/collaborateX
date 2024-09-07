@@ -69,11 +69,11 @@ console.log(otp)
       email,
       password: hashedPassword,
       username,
-      connections: [], // Initialize with an empty array or adjust as needed
+      connections: [], 
     });
     await newUser.save ();
     delete otpStore[email];
-    return res.status (201).json ({message: 'User registered successfully'});
+    return res.status (201).json ({message: 'User registered successfully',user:newUser});
   } catch (error) {
     console.error ('Error during user creation:', error);
     return res.status (500).json ({error: 'Failed to save user data'});

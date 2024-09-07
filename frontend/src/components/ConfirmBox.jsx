@@ -4,19 +4,18 @@ import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 export default function ConfirmBox(props) {
-    const {openModal,setOpenModal}=props
+    const {openConfirmBox,setOpenConfirmBox}=props
     const navigate = useNavigate()
     const handleLogout=(e)=>{
-     
+      setOpenConfirmBox(false); 
       localStorage.clear();
-      navigate('./auth')
-  
+      navigate('/auth')
     }
 
   return (
     <>
    
-      <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
+      <Modal show={openConfirmBox} size="md" onClose={() => setOpenConfirmBox(false)} popup>
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -25,10 +24,10 @@ export default function ConfirmBox(props) {
               Are you sure you want to Signout?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={() => {setOpenModal(false); handleLogout()}}>
+              <Button color="failure" onClick={handleLogout}>
                 {"Yes, I'm sure"}
               </Button>
-              <Button color="gray" onClick={() => setOpenModal(false)}>
+              <Button color="gray" onClick={() => setOpenConfirmBox(false)}>
                 No, cancel
               </Button>
               

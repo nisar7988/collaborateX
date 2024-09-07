@@ -1,7 +1,5 @@
 import { FooterComponent } from "../components/FooterComponent";
 import NavigationBar from "../components/Navbar";
-// import img1 from "../assets/img1.jpg";
-// import img2 from "../assets/img2.jpg";
 import { Button } from "flowbite-react";
 import { IoVideocam } from "react-icons/io5";
 import { MdKeyboard } from "react-icons/md";
@@ -15,8 +13,7 @@ export function Homepage() {
   console.log(socket)
 //pase from other
 const [email, setEmail] = useState("nisarahmed7988@gmail.ocm");
-  const [room, setRoom] = useState("1");
-
+  const [room, setRoom] = useState('');
 
   const handleSubmitForm = useCallback(
     (e) => {
@@ -44,8 +41,13 @@ const [email, setEmail] = useState("nisarahmed7988@gmail.ocm");
 
   //login usereffect
   useEffect(() => {
+    // profilePicLocal()
     if (!localStorage.getItem("id")) {
       navigate("/auth");
+    }
+    else{
+      const username = JSON.parse(localStorage.getItem('user'))['username'];
+      setRoom(username)
     }
   }, [navigate]);
 

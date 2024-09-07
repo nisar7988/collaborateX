@@ -137,7 +137,7 @@ const Login = (props) => {
         )}
         <div className="relative border-b-2 border-cyan-700 z-0 w-full mb-1 group hover:blue-red-900 ">
           <input
-            type="password"
+            type={isPasswordVisible ? 'text':'password'}
             name="password"
             id="password"
             className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer ${

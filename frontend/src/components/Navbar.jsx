@@ -1,7 +1,10 @@
-import React,{useState} from "react";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/collaborateX.png";
-import ConfirmBox from "./ConfirmBox";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../assets/collaborateX.png';
+import ConfirmBox from './ConfirmBox';
+import defaultIMG from '../assets/user.png'; // Default image to use initially
+import axios from 'axios';
+
 import {
   Avatar,
   Dropdown,
@@ -13,20 +16,42 @@ import {
   NavbarCollapse,
   NavbarLink,
   NavbarToggle,
-} from "flowbite-react";
-import { Link } from "react-router-dom";
+} from 'flowbite-react';
+import { Link } from 'react-router-dom';
+
 const NavigationBar = () => {
-  const navigate=useNavigate();
-  const [openModal, setOpenModal] = useState(false);
+  useEffect(()=>{
+    if (!localStorage.getItem("id")) {
+      navigate("/auth");
+    }
+  },[])
+  const [openConfirmBox, setOpenConfirmBox] = useState(false);
+  const navigate = useNavigate();
+const [user,setUser] = useState({})
+  const [profilePic,setProfilePic] = useState(null)
+  useEffect(() => {
+   const pic =JSON.parse(localStorage.getItem("user"));
+   setUser(pic);
+   setProfilePic(pic.profilePicture);
+
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (profilePic !== defaultIMG) {
+        URL.revokeObjectURL(profilePic);
+      }
+    };
+  }, [profilePic]);
 
   return (
     <div>
-      <ConfirmBox openModal={openModal} setOpenModal={setOpenModal}/>
+      <ConfirmBox openConfirmBox={openConfirmBox} setOpenConfirmBox={setOpenConfirmBox} />
       <Navbar className="" fluid>
         <NavbarBrand to="/">
           <img
             src={logo}
-            className="mr-3 w-[10rem] h-[5rem] rounded-full object-cover  sm:h-9"
+            className="mr-3 w-[10rem] h-[5rem] rounded-full object-cover sm:h-9"
             alt="Flowbite React Logo"
           />
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white"></span>
@@ -38,21 +63,20 @@ const NavigationBar = () => {
             label={
               <Avatar
                 alt="User settings"
-                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                img={profilePic ? profilePic :defaultIMG }
                 rounded
               />
             }
           >
             <DropdownHeader>
-              <span className="block text-sm">Bonnie Green</span>
+              <span className="block text-sm">{user.name}</span>
               <span className="block truncate text-sm font-medium">
-                name@example.com
+               {user.email}
               </span>
             </DropdownHeader>
-            <DropdownItem onClick={()=>{navigate('/profile')}}>Profile</DropdownItem>
-  
+            <DropdownItem onClick={() => navigate('/profile')}>Profile</DropdownItem>
             <DropdownDivider />
-            <DropdownItem onClick={() => setOpenModal(true)} >Sign out</DropdownItem>
+            <DropdownItem onClick={() => setOpenConfirmBox(true)}>Sign out</DropdownItem>
           </Dropdown>
           <NavbarToggle />
         </div>

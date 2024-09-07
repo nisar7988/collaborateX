@@ -9,6 +9,7 @@ import Rejoin from './pages/Rejoin';
 
 import ProfilePage from './pages/Profile';
 import JoinMeeting from './pages/JoinMeeting';
+import EditProfile from './pages/EditProfile';
 
 const App = () => {
   return (
@@ -18,10 +19,11 @@ const App = () => {
     <Route path='/' element={<Homepage/>} />
     <Route path='/auth' element={<Auth/>} />
     <Route path='/profile' element={<ProfilePage/>} />
-    <Route path='/join-meeting' element={<JoinMeeting/>} />
+    <Route path='/join-meeting/:roomId' element={<JoinMeeting/>} />
     <Route path='/rejoin' element={<Rejoin/>} />
+    <Route path='/edit-profile' element={<EditProfile/>} />
 
-    <Route path="/room/:roomid" element={<VideoCallScreen/>} />
+    <Route path="/room/:roomId" element={<VideoCallScreen/>} />
 <Route path="*" element={<NotFound/> } />
   </Routes>
 </Router>

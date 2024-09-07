@@ -75,10 +75,15 @@
           setOtpSent(true);
         }
       } catch (error) {
+        if(error.response.status ===400){
+          setColorText('user already exist');
+          setColorAlert("failure");
+        }
+        else{
         console.error("Signup error: ", error); // Log error
         setColorAlert("failure");
         setColorText("Failed to send OTP!");
-        setShowAlert(true);
+        }
       }
     } else {
       setColorAlert("failure");
@@ -86,19 +91,29 @@
       setShowAlert(true);
     }
     setLoading(false);
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 1000);
 };
 
 const handleVerifyOtp = async () => {
     setLoading(true);
     try {
       const { email, name, password, username } = formData;
-      const response = await axios.post('/api/auth/verify-otp', {
+      const res = await axios.post('/api/auth/verify-otp', {
         email,
         otp,
         password,
         username,
         name
       });
+        console.log(res.data.user);
+        const { _id, ...rest } = res.data.user;
+        console.log(_id);
+        console.log(rest); // The rest of the data without _id
+        localStorage.setItem("user", JSON.stringify(rest));
+        localStorage.setItem("id", JSON.stringify(_id));
       setColorAlert("success");
       setColorText("User Registered Successfully.");
       setShowAlert(true);

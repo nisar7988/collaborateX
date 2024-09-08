@@ -15,12 +15,12 @@ const { handleSocketConnection } = require('./sockets/socketHandlers');
 const cloudinary = require('cloudinary').v2;
 const app = express();
 const port = 3000;
-//middelwares
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
-//routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/req', reqRoutes);
 app.use("/api/post", postRoutes);
@@ -35,17 +35,14 @@ const io = new Server(server, {
   }
 });
 
-
 cloudinary.config({
   cloud_name: 'dnumgiioa',
   api_key: '928152437373728',
   api_secret:'i6wS-1zxGCwTiNk0r6sBXvg3bp4',
 });
 // Initialize socket handlers
-
 handleSocketConnection(io);
 //send participants
-
 app.get('/', (req, res) => {
   console.log('getparticipnat');
   res.status(200).json({
@@ -65,6 +62,3 @@ app.get('/get-stream', (req, res) => {
 server.listen(port, () => {
   console.log(`Server is listening on port: ${port}`);
 });
-
-
-

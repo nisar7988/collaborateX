@@ -11,25 +11,27 @@ const {roomId} = useParams();
 
   const handleSubmitForm = useCallback(
     (e) => {
+      console.log(roomId)
       e.preventDefault();
-      socket.emit("room:join", { email, room:roomId });
+      navigate(`/room/${roomId}`);
+      // socket.emit("join room", { email, roomId });
     },
     [email, roomId, socket]
   );
 
   const handleJoinRoom = useCallback(
     (data) => {
-      const { email, room } = data;
-      navigate(`/room/${room}`);
+      const { email, roomId } = data;
+      navigate(`/room/${roomId}`);
     },
     [navigate]
   );
 
 
   useEffect(() => {
-    socket.on("room:join", handleJoinRoom);
+    socket.on("join room", handleJoinRoom);
     return () => {
-      socket.off("room:join", handleJoinRoom);
+      socket.off("join room", handleJoinRoom);
     };
   }, [socket, handleJoinRoom]);
 

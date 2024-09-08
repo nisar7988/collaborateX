@@ -13,43 +13,41 @@ export function Homepage() {
   console.log(socket)
 //pase from other
 const [email, setEmail] = useState("nisarahmed7988@gmail.ocm");
-  const [room, setRoom] = useState('');
+const [room, setRoom] = useState('');
 
-  const handleSubmitForm = useCallback(
-    (e) => {
-      e.preventDefault();
-      socket.emit("room:join", { email, room });
-    },
-    [email, room, socket]
-  );
+const handleSubmitForm = useCallback(
+  (e) => {
+    e.preventDefault();
+    const roomID = JSON.parse(localStorage.getItem('user'))['username'];
+       navigate(`/room/${roomID}`);
+      // console.log(roomId) // Add basic validation
+      // socket.emit("join room", { email, roomId });
+    
+  },
+  [email, room, socket]
+);  
 
-  const handleJoinRoom = useCallback(
-    (data) => {
-      const { email, room } = data;
-      navigate(`/room/${room}`);
-    },
-    [navigate]
-  );
+const handleJoinRoom = useCallback(
+  (data) => {
+    const { roomId } = data;
+    navigate(`/room/${roomId}`);
+  },
+  [navigate]
+);
 
+useEffect(() => {
+  socket.on("join room", handleJoinRoom);
+  return () => {
+    socket.off("join room", handleJoinRoom);
+  };
+}, [socket, handleJoinRoom]);
 
-  useEffect(() => {
-    socket.on("room:join", handleJoinRoom);
-    return () => {
-      socket.off("room:join", handleJoinRoom);
-    };
-  }, [socket, handleJoinRoom]);
-
-  //login usereffect
-  useEffect(() => {
-    // profilePicLocal()
-    if (!localStorage.getItem("id")) {
-      navigate("/auth");
-    }
-    else{
-      const username = JSON.parse(localStorage.getItem('user'))['username'];
-      setRoom(username)
-    }
-  }, [navigate]);
+// Login check useEffect
+useEffect(() => {
+  if (!localStorage.getItem("id")) {
+    navigate("/auth");
+  } 
+}, [navigate]);
 
   return (
     <>

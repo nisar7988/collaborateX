@@ -27,14 +27,14 @@ const MeetingCard = (props) => {
       </div>
 
       {/* Add Participant Button */}
-      <Button
+      {/* <Button
         color="blue"
         pill={true}
         className="flex items-center w-max justify-center py-2"
       >
         <AiOutlineUserAdd className="w-5 h-5 mr-2" />
         Add Participant
-      </Button>
+      </Button> */}
 
       {/* Copy Link Text */}
       <div className="text-gray-500 mb-2">
@@ -52,7 +52,7 @@ const MeetingCard = (props) => {
 
       {/* User ID Display */}
       <div className="text-gray-500 mt-2">
-        You joined as <span className="font-semibold">{userId}</span>
+        {/* You joined as <span className="font-semibold">{userId}</span> */}
       </div>
     </Card>
   );

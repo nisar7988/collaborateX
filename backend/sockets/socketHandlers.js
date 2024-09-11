@@ -4,18 +4,17 @@ const handleSocketConnection = (io) => {
 
   io.on('connection', (socket) => {
     console.log('New client connected: ', socket.id);
-
+socket.on('start',({email,roomID})=>{
+    socket.join(roomID);
+    emailToSocketIdMap.set(email, socket.id);
+        socketidToEmailMap.set(socket.id, email);
+    socket.emit('start',{roomID})
+})
     // Handle joining a room
     socket.on("join room", (roomID) => {
         console.log(`User ${socket.id} joining room: ${roomID}`);
-        
+      
         if (users[roomID]) {
-            const length = users[roomID].length;
-            if (length === 4) {
-                socket.emit("room full");
-                console.log("Room is full");
-                return;
-            }
             users[roomID].push(socket.id);
         } else {
             users[roomID] = [socket.id];
@@ -27,6 +26,11 @@ const handleSocketConnection = (io) => {
         // Send the list of existing users in the room
         socket.emit("all users", usersInThisRoom);
     });
+
+    socket.on("leave-room", () => {
+        socket.broadcast.emit("user-left", socket.id);
+      });
+      
     // Handle sending a signal
     socket.on("sending signal", (payload) => {
         console.log(`Sending signal from ${payload.callerID} to ${payload.userToSignal}`);
@@ -38,19 +42,27 @@ const handleSocketConnection = (io) => {
         console.log(`Returning signal to ${payload.callerID} from ${socket.id}`);
         io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
     });
-  
+    socket.on('message', ({ room, message }) => {
+        console.log(room, message);
+        io.to(room).emit('receive-message', { message, id: socket.id, name:          socketidToEmailMap.get(socket.id) });
+      });
     // Handle disconnect
     socket.on('disconnect', () => {
         console.log(`Client disconnected: ${socket.id}`);
         const roomId = socketToRoom[socket.id];
+        const email = socketidToEmailMap.get(socket.id)
         let room = users[roomId];
+        if (email) {
+                  emailToSocketIdMap.delete(email);
+                  socketidToEmailMap.delete(socket.id);
+                }
         if (room) {
             room = room.filter((id) => id !== socket.id);
             users[roomId] = room;
         }
     });
   });
-  
+
 };
 
 module.exports = { handleSocketConnection };
@@ -83,7 +95,7 @@ module.exports = { handleSocketConnection };
 
 //   socket.on('message', ({ room, message }) => {
 //     console.log(room, message);
-//     io.to(room).emit('receive-message', { message, id: socket.id, name: socketidToEmailMap.get(socket.id) });
+//     io.to(room).emit('receive-message', { message, id: socket.id, name:          socketidToEmailMap.get(socket.id) });
 //   });
 
 //   socket.on('call:accepted', ({ to, ans }) => {

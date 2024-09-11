@@ -12,16 +12,17 @@ export function Homepage() {
   const socket = useSocket();
   console.log(socket)
 //pase from other
-const [email, setEmail] = useState("nisarahmed7988@gmail.ocm");
+const [roomCode,setRoomCode]=useState('')
+const [email, setEmail] = useState("nisarahmed7988@gmail.com");
 const [room, setRoom] = useState('');
 
 const handleSubmitForm = useCallback(
   (e) => {
     e.preventDefault();
     const roomID = JSON.parse(localStorage.getItem('user'))['username'];
-       navigate(`/room/${roomID}`);
+      //  navigate(`/room/${roomID}`);
       // console.log(roomId) // Add basic validation
-      // socket.emit("join room", { email, roomId });
+      socket.emit("start", { email, roomID });
     
   },
   [email, room, socket]
@@ -29,16 +30,16 @@ const handleSubmitForm = useCallback(
 
 const handleJoinRoom = useCallback(
   (data) => {
-    const { roomId } = data;
-    navigate(`/room/${roomId}`);
+    const { roomID } = data;
+    navigate(`/room/${roomID}`);
   },
   [navigate]
 );
 
 useEffect(() => {
-  socket.on("join room", handleJoinRoom);
+  socket.on("start", handleJoinRoom);
   return () => {
-    socket.off("join room", handleJoinRoom);
+    socket.off("start", handleJoinRoom);
   };
 }, [socket, handleJoinRoom]);
 
@@ -58,8 +59,9 @@ useEffect(() => {
             Fast & secure video conferencing with CollaborateX
           </h3>
           <p className="py-3 text-justify">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, eaque hic! Temporibus magnam quas
-            exercitationem, alias ab pariatur velit.
+        
+Welcome to collaborateX
+Effortlessly connect, collaborate, and communicate with your team through seamless video conferencing. Manage meetings, share links, approve participants, and engage in real-time chat—all in one place. Perfect for teams of any size, collaborateX simplifies remote collaboration.
           </p>
           <div className="flex flex-col custom-md:flex-row items-center custom-md:items-center py-2 space-y-2 custom-md:space-y-0 custom-md:space-x-4">
             <Button
@@ -81,7 +83,7 @@ useEffect(() => {
               />
             </div>
             <label
-              onClick={() => roomCode && handleJoinRoom({ roomid: roomCode })}
+              onClick={() => roomCode && handleJoinRoom({ roomID: roomCode })}
               className="cursor-pointer text-slate-300 hover:text-cyan-600 font-bold text-lg custom-md:text-xl"
             >
               Join

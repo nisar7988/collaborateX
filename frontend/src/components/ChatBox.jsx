@@ -45,7 +45,7 @@ return item.id===socket.id ?
     <div className="bg-cyan-700 text-white rounded-lg p-3 max-w-xs">
       <p className="text-sm font-semibold">You</p>
       <p className="text-sm">
-       {item.message}
+   <span>{item.message}</span>
       </p>
     </div>
   </div> :

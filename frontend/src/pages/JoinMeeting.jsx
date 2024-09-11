@@ -5,33 +5,33 @@ import logo from '../assets/collaborateX.png'
 import { Button } from 'flowbite-react';
 const JoinMeeting = () => {
 const {roomId} = useParams();
+console.log(roomId)
   const [email, setemail] = useState('');
   const navigate = useNavigate();
   const socket = useSocket();
 
   const handleSubmitForm = useCallback(
     (e) => {
-      console.log(roomId)
       e.preventDefault();
-      navigate(`/room/${roomId}`);
-      // socket.emit("join room", { email, roomId });
+      // navigate(`/room/${roomId}`);
+      socket.emit("start", { email, roomID:roomId });
     },
     [email, roomId, socket]
   );
 
   const handleJoinRoom = useCallback(
     (data) => {
-      const { email, roomId } = data;
-      navigate(`/room/${roomId}`);
+      const { roomID } = data;
+      navigate(`/room/${roomID}`);
     },
     [navigate]
   );
 
 
   useEffect(() => {
-    socket.on("join room", handleJoinRoom);
+    socket.on("start", handleJoinRoom);
     return () => {
-      socket.off("join room", handleJoinRoom);
+      socket.off("start", handleJoinRoom);
     };
   }, [socket, handleJoinRoom]);
 

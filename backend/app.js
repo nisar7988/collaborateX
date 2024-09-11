@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { emailToSocketIdMap, socketidToEmailMap, socketidToStream,users,socketToRoom } = require('./sockets/socketMapping.js');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');

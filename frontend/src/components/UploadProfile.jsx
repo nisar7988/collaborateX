@@ -28,7 +28,7 @@ const Upload = (props) => {
     console.log(formData.values());
 
     try {
-      const response = await axios.post("/api/post/upload", formData, {
+      const response = await axios.post("https://collaboratex.onrender.com/api/post/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

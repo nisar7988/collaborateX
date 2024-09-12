@@ -64,7 +64,7 @@ const Login = (props) => {
     console.log("login");
     console.log(username);
     try {
-      const res = await axios.post("/api/auth/login", username);
+      const res = await axios.post("https://collaboratex.onrender.com/api/auth/login", username);
 
       console.log(res);
       if (res.status === 200) {

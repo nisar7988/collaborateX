@@ -56,7 +56,7 @@ const VideoCallScreen = () => {
   async function getParticipants() {
     console.log("getpparticipants");
     try {
-      const response = await axios.get("http://192.168.14.1:3000/");
+      const response = await axios.get("https://collaboratex.onrender.com/");
       console.log(response);
       setParticipants(response.data.participants || []);
     } catch (err) {

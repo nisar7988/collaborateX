@@ -13,7 +13,7 @@ const ChnageProfile = (props) => {
   const handleRemove = async () => {
     let userId = localStorage.getItem("id");
     try {
-      const response = await axios.put("/api/update/remove-pic", {
+      const response = await axios.put("https://collaboratex.onrender.com/api/update/remove-pic", {
         userId: userId,
       });
       if (response.status === 201) {

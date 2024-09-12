@@ -49,7 +49,7 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put("/api/update/profile", {profile,userId});
+      const res = await axios.put("https://collaboratex.onrender.com/api/update/profile", {profile,userId});
       if (res.status === 201) {
      const {_id,...rest} = res.data;
      localStorage.setItem("id",_id)

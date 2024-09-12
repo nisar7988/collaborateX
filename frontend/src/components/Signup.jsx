@@ -68,7 +68,7 @@
     if (formData.password === formData.confirmPassword) {
       try {
         const { confirmPassword, ...datatosend } = formData;
-        const response = await axios.post('/api/auth/signup', datatosend);
+        const response = await axios.post('https://collaboratex.onrender.com/api/auth/signup', datatosend);
         if (response.status === 201) {
           setOtpSent(false);
         } else if (response.status === 200) {
@@ -101,7 +101,7 @@ const handleVerifyOtp = async () => {
     setLoading(true);
     try {
       const { email, name, password, username } = formData;
-      const res = await axios.post('/api/auth/verify-otp', {
+      const res = await axios.post('https://collaboratex.onrender.com/api/auth/verify-otp', {
         email,
         otp,
         password,

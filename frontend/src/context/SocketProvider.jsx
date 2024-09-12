@@ -9,7 +9,7 @@ export const useSocket = () => {
 };
 
 export const SocketProvider = (props) => {
-  const socket = useMemo(() => io("http://192.168.14.1:3000"), []);
+  const socket = useMemo(() => io("https://collaboratex.onrender.com/"), []);
 
   return (
     <SocketContext.Provider value={socket}>

@@ -27,6 +27,16 @@ import {
   FaVideoSlash,
 } from "react-icons/fa";
 import { useMediaStreams } from "../context/mediaStreamProvider.jsx";
+
+// Update the getGridLayout helper function for better height management
+const getGridLayout = (peerCount) => {
+  if (peerCount === 0) return 'grid-cols-1 h-[85vh]';
+  if (peerCount === 1) return 'grid-cols-1 md:grid-cols-1 h-[85vh]';
+  if (peerCount === 2) return 'grid-cols-1 md:grid-cols-2 h-[85vh]';
+  if (peerCount === 3) return 'grid-cols-2 md:grid-cols-3 h-[85vh]';
+  return 'grid-cols-2 md:grid-cols-3 h-[85vh]';
+};
+
 const VideoCallScreen = () => {
   const { mediaStreams, addStream, removeStream } = useMediaStreams();
   const host = window.location.host;
@@ -66,23 +76,38 @@ const VideoCallScreen = () => {
   useEffect(()=>{
     getParticipants();
   },[peers,socket])
-  // Video component to display peer's video
-  const Video = ({ peer }) => {
-    console.log("vidoe running");
+  // Update the Video component with better height control
+  const Video = ({ peer, isMainVideo }) => {
     const ref = useRef();
+    
     useEffect(() => {
-      console.log("video useeffect run");
       peer.on("stream", (stream) => {
-        setRemoteStream(stream);
-        // ref.current.srcObject = stream; // Attach stream to video element
-      });
-
-      peer.on("error", (err) => {
-        console.error("Peer error:", err);
+        if (ref.current) {
+          ref.current.srcObject = stream;
+        }
       });
     }, [peer]);
-    console.log("retunring react player");
-    return <ReactPlayer playing muted ref={ref} url={remoteStream} />;
+  
+    return (
+      <div className={`relative rounded-lg overflow-hidden ${
+        isMainVideo 
+          ? 'h-full max-h-[85vh] flex items-center justify-center' 
+          : 'h-full'
+      }`}>
+        <video
+          ref={ref}
+          autoPlay
+          playsInline
+          muted
+          className={`w-full h-full object-cover ${
+            isMainVideo ? 'max-h-[85vh]' : ''
+          }`}
+        />
+        <div className="absolute bottom-4 left-4 bg-black/50 px-3 py-1 rounded-full">
+          <span className="text-white text-sm">User</span>
+        </div>
+      </div>
+    );
   };
 
   // Video constraints
@@ -228,126 +253,126 @@ const VideoCallScreen = () => {
   }, []);
   return (
     <>
-      <div className="h-screen flex flex-col">
-        <div className="flex-grow bg-gray-900  flex items-center justify-center relative">
-          <div className="w-full h-full flex  items-center justify-center  bg-black">
-            {/* //myvideo */}
-            <div className="absolute flex flex-col z-40 bottom-[10vh] right-[3vw] shadow-md  ">
-              {myStream && isVideo ? (
-                <ReactPlayer
-                  muted
-                  playing
-                  url={myStream}
-                  width={250}
-                  height="auto"
-                />
+      <div className="h-screen flex flex-col bg-gray-900">
+        <div className="flex-grow relative overflow-hidden">
+          <div className="absolute inset-0 p-4">
+            {/* Main video grid with fixed height */}
+            <div className={`grid ${getGridLayout(peers.length)} gap-4`}>
+              {peers.length > 0 ? (
+                peers.map((peer, index) => (
+                  <Video 
+                    key={index} 
+                    peer={peer} 
+                    isMainVideo={peers.length === 1}
+                  />
+                ))
               ) : (
-                <div className="text-white flex items-center justify-center flex-col">
-                  <img src={userimg} alt="user" className="h-[15vh] w-[17vw] object-fit-cover" />
+                <div className="flex items-center justify-center bg-gray-800 rounded-lg">
+                  <div className="text-center text-white">
+                    <img 
+                      src={userimg} 
+                      alt="user" 
+                      className="w-24 h-24 mx-auto rounded-full mb-4" 
+                    />
+                    <p className="text-lg">Waiting for others to join...</p>
+                  </div>
                 </div>
               )}
-              <span className="username absolute bottom-0 z-2  text-white text-xl ">
-                You
-              </span>
             </div>
-            {/* remote */}
-           
-              <div
 
-                className={`container grid ${peers.length>=2?"grid-cols-2":"grid-cols-1"} justify-center overflow-auto`}
-              >
-                {/* {     console.log(peers.length)} */}
-                {peers.length > 0 ? (
-                  peers.map((peer, index) => {
-                    return <Video peer={peer} key={index} />;
-                  })
-                ) : (
-                  <div className="text-white overflow-hidden flex items-center justify-center flex-col">
-                    <img src={userimg} alt="user" className="rounded-full" />
-                    <span>Waiting for other user...</span>
-                    <div className="bg-cyan-700"></div>
-                  </div>
-                )}
+            {/* Adjust local video overlay position to prevent overlap */}
+            <div className="absolute bottom-24 right-4 w-48 aspect-video rounded-lg overflow-hidden shadow-lg z-10">
+              {myStream && isVideo ? (
+                <ReactPlayer
+                  playing
+                  muted
+                  url={myStream}
+                  width="100%"
+                  height="100%"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gray-800">
+                  <img 
+                    src={userimg} 
+                    alt="user" 
+                    className="w-16 h-16 rounded-full"
+                  />
+                </div>
+              )}
+              <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded-full">
+                <span className="text-white text-sm">You</span>
               </div>
-              {/* {showAllParticipants ? (
-              <AllUserVideos peers={peers} Video={Video} />
-            ) : ""} */}
+            </div>
           </div>
         </div>
-        <div className="grid grid-cols-3 justify-between py-2 bg-transparent absolute bottom-0 w-full">
-          <div className="time flex items-center text-white px-4">
-            <span className="px-2 border-r-2">Meeting</span>
-            <span className="px-2">{roomId}</span>
-          </div>
-          <div className="buttons flex justify-center items-center space-x-1">
-            <button
-              onClick={toggleAudio}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
-            >
-              {isAudio ? (
-                <FaMicrophone className="text-2xl" />
-              ) : (
-                <FaMicrophoneSlash className="text-2xl" />
-              )}
-              <span className="text-xs mt-1">Mute</span>
-            </button>
 
-            <button
-              onClick={toggleVideo}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
-            >
-              {isVideo ? (
-                <FaVideo className="text-2xl" />
-              ) : (
-                <FaVideoSlash className="text-2xl" />
-              )}
-              <span className="text-xs mt-1">Camera</span>
-            </button>
-            {/* <button className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded ">
-              <FaShareSquare className="text-2xl" />
-              <span className="text-xs mt-1">Share</span>
-            </button> */}
-            <button
-              onClick={handleReaction}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
-            >
-              <FaHandPaper className="text-2xl" />
-              <span className="text-xs mt-1">Reactions</span>
-            </button>
-            <button
-              onClick={leaveRoom}
-              className="flex flex-col items-center justify-center bg-red-600 text-white font-bold h-12 px-3 rounded"
-            >
-              <FaPhoneSlash className="text-2xl" />
-              <span className="text-xs mt-1">Leave</span>
-            </button>
-          </div>
-          <div className="flex">
-            <button
-              onClick={() => setIsParticipantsOpen(true)}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
-            >
-              <FaUserPlus className="text-2xl" />
-              <span className="text-xs mt-1">Participants</span>
-            </button>
-            <button
-              onClick={() => {
-                setIsChatOpen(true);
-                setIsNotification(false);
-              }}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded relative "
-            >
-              {isNotification && <ShowNotification />}
-              <FaCommentDots className="text-2xl" />
-              <span className="text-xs mt-1">Chat</span>
-            </button>
-            {/* <button
-              onClick={() => setShowAllParticipants(!showAllParticipants)}
-              className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
-            >
-              <BiBorderAll className="text-2xl" />
-              <span className="text-xs mt-1">Paritcipants</span>
-            </button> */}
+        {/* Move controls up slightly to ensure no overflow */}
+        <div className=" backdrop-blur-md py-3 px-6 mt-auto">
+          <div className="grid grid-cols-3 justify-between py-2 bg-transparent absolute bottom-0 w-full">
+            <div className="time flex items-center text-white px-4">
+              <span className="px-2 border-r-2">Meeting</span>
+              <span className="px-2">{roomId}</span>
+            </div>
+            <div className="buttons flex justify-center items-center space-x-1">
+              <button
+                onClick={toggleAudio}
+                className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
+              >
+                {isAudio ? (
+                  <FaMicrophone className="text-2xl" />
+                ) : (
+                  <FaMicrophoneSlash className="text-2xl" />
+                )}
+                <span className="text-xs mt-1">Mute</span>
+              </button>
+
+              <button
+                onClick={toggleVideo}
+                className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
+              >
+                {isVideo ? (
+                  <FaVideo className="text-2xl" />
+                ) : (
+                  <FaVideoSlash className="text-2xl" />
+                )}
+                <span className="text-xs mt-1">Camera</span>
+              </button>
+              <button
+                onClick={handleReaction}
+                className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
+              >
+                <FaHandPaper className="text-2xl" />
+                <span className="text-xs mt-1">Reactions</span>
+              </button>
+              <button
+                onClick={leaveRoom}
+                className="flex flex-col items-center justify-center bg-red-600 text-white font-bold h-12 px-3 rounded"
+              >
+                <FaPhoneSlash className="text-2xl" />
+                <span className="text-xs mt-1">Leave</span>
+              </button>
+            </div>
+            <div className="flex">
+              <button
+                onClick={() => setIsParticipantsOpen(true)}
+                className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded "
+              >
+                <FaUserPlus className="text-2xl" />
+                <span className="text-xs mt-1">Participants</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsChatOpen(true);
+                  setIsNotification(false);
+                }}
+                className="flex flex-col items-center justify-center text-white font-bold py-2 px-3 rounded relative "
+              >
+                {isNotification && <ShowNotification />}
+                <FaCommentDots className="text-2xl" />
+                <span className="text-xs mt-1">Chat</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
